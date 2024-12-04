@@ -1,0 +1,5 @@
+pandas==2.2.2
+pyodbc==5.1.0
+snowflake-connector-python=3.10.1
+prefect==2.19.2
+prefect-snowflake==0.27.6

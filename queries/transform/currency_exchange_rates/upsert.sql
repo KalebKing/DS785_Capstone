@@ -1,0 +1,45 @@
+merge into production.helper."Currency Exchange Rates" using (
+    select stg.$1 as "From Currency"
+        , stg.$2 as "To Currency"
+        , stg.$3 as "Effective Date"
+        , stg.$4 as "Expiration Date"
+        , stg.$5 as "Buying Price"
+        , stg.$6 as "Selling Price"
+        , stg.$7 as "Midpoint"
+        , stg.$8 as "Clearing Price"
+    from <<FILENAME>> as stg
+) as bucket
+    on production.helper."Currency Exchange Rates"."From Currency" = bucket."From Currency"
+    and production.helper."Currency Exchange Rates"."To Currency" = bucket."To Currency"
+    and production.helper."Currency Exchange Rates"."Effective Date" = bucket."Effective Date"
+when matched and (
+       "Currency Exchange Rates"."Expiration Date" != bucket."Expiration Date"
+    or "Currency Exchange Rates"."Buying Price" != bucket."Buying Price"
+    or "Currency Exchange Rates"."Selling Price" != bucket."Selling Price"
+    or "Currency Exchange Rates"."Midpoint" != bucket."Midpoint"
+    or "Currency Exchange Rates"."Clearing Price" != bucket."Clearing Price"
+) then update set
+      "Currency Exchange Rates"."Expiration Date" = bucket."Expiration Date"
+    , "Currency Exchange Rates"."Buying Price" = bucket."Buying Price"
+    , "Currency Exchange Rates"."Selling Price" = bucket."Selling Price"
+    , "Currency Exchange Rates"."Midpoint" = bucket."Midpoint"
+    , "Currency Exchange Rates"."Clearing Price" = bucket."Clearing Price"
+when not matched then insert (
+      "From Currency"
+    , "To Currency"
+    , "Effective Date"
+    , "Expiration Date"
+    , "Buying Price"
+    , "Selling Price"
+    , "Midpoint"
+    , "Clearing Price"
+) values (
+      bucket."From Currency"
+    , bucket."To Currency"
+    , bucket."Effective Date"
+    , bucket."Expiration Date"
+    , bucket."Buying Price"
+    , bucket."Selling Price"
+    , bucket."Midpoint"
+    , bucket."Clearing Price"
+);

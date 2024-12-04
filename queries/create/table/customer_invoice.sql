@@ -1,0 +1,32 @@
+create table if not exists production.star."Customer Invoice" (
+-- create or replace table production.star."Customer Invoice" (
+     "Business Unit" varchar(50) comment 'Business unit to which the invoice belongs'
+    , "Carrier" varchar(150) comment 'Carrier used for shipping products to the customer'
+    , "Create Date" timestamp_ntz(9) comment 'Date when the invoice was created'
+    , "Credit Terms" varchar(100) comment 'Terms of credit payment for the invoice'
+    , "Currency" varchar(100) comment 'Currency in which the invoice is denominated'
+    , "Customer Number" number(38, 0) comment 'Unique identifier for customer'
+    , "Customer PO" varchar(100) comment 'Customer purchase order number'
+    , "Customer SKU" varchar(100) comment 'Stock keeping unit assigned by the customer to the product'
+    , "Extended Price" number(38, 2) comment 'Total price of the line item'
+    , "Incoterms" varchar(150) comment 'Shipment and delivery responsibilities between the buyer and seller'
+    , "Invoice Date" date comment 'Date listed on the invoice'
+    , "Invoice Number" number(10, 0) comment 'Unique identifier of the invoice'
+    , "Key" number(38, 0) comment 'Unique identifier of customer invoice line item'
+    , "Language" varchar(25) comment 'Language in which the invoice is written'
+    , "Line Number" number(38, 1) comment 'Unique identifier of the specific line within the invoice'
+    , "Line Sequence" number(38, 0) comment 'Sequence number of the line item in the invoice'
+    , "Order Line" number(38, 1) comment 'Unique identifier of the specific line within the order'
+    , "Order Number" number(10, 0) comment 'Unique identifier of the order'
+    , "Quantity" number(38, 3) comment 'Number of units billed to the customer'
+    , "Quote Line" number(38, 1) comment 'Unique identifier of the line item in the quote'
+    , "Quote Number" number(10, 0) comment 'Unique identifier of the quote associated with the order'
+    , "Reference Number" number(10, 0) comment 'Unique identifier for cross-referencing related documents'
+    , "Salesperson" varchar(150) comment 'Assigned sales representative'
+    , "Ship To Number" number(38, 0) comment 'Unique identifier of ship to associated with the invoice'
+    , "SKU" varchar(50) comment 'Stock keeping unit assigned by the company to the product'
+    , "Unit Price" number(38, 5) comment 'Price per unit of the line item'
+	, constraint CustomerInvoicePK primary key ("Invoice Number", "Line Number")
+)
+    comment = 'Customer invoice records'
+;
