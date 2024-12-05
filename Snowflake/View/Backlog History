@@ -1,0 +1,40 @@
+create or replace view production.star."Backlog History"(
+	"Date",
+	"Customer Number",
+	"Ship To Number",
+	"Business Unit",
+	"Salesperson",
+	"Order Number",
+	"Line Number",
+	"SKU",
+	"Quantity",
+	"Amount"
+) comment = 'Daily snapshot of outstanding customer orders'
+ as
+    select
+        cal."Date"
+        , coh."Customer Number"
+        , coh."Ship To Number"
+        , coh."Business Unit"
+        , coh."Salesperson"
+        , coh."Order Number"
+        , coh."Line Number"
+        , coh."SKU"
+        , sum(coh."Quantity Ordered" - coh."Quantity Cancelled" - coh."Quantity Shipped") as "Quantity"
+        , sum((coh."Quantity Ordered" - coh."Quantity Cancelled" - coh."Quantity Shipped") * coh."Unit Price") as "Amount"
+    from
+        production.star."Calendar" as cal
+        left join production.star."Customer Order History" as coh
+            on cal."Date" >= to_date(coh."Effective Date")
+    where
+        cal."Date" between '2021-01-01' and current_date()
+        and coh."Line Number" >= 0
+    group by
+        all
+    having
+        sum(coh."Quantity Ordered" - coh."Quantity Cancelled" - coh."Quantity Shipped") > 0
+    order by
+        cal."Date"
+        , coh."Order Number"
+        , coh."Line Number"
+;
